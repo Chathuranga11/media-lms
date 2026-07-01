@@ -30,6 +30,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
+
+            // --- Custom Branding Added Here ---
+            ->brandName('SurangaMedia')
+            ->brandLogo(asset('images/login_logo.png'))
+            ->darkModeBrandLogo(asset('images/login_logo_dark.png')) // <--- Added this line
+            ->brandLogoHeight('4rem')
+            // ----------------------------------
+
             ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
                 fn(): string => Blade::render('
