@@ -18,7 +18,10 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        .delay-100 { animation-delay: 100ms; } .delay-200 { animation-delay: 200ms; } .delay-300 { animation-delay: 300ms; } .delay-400 { animation-delay: 400ms; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
@@ -46,31 +49,36 @@
         </div>
     </nav>
 
-    <main class="flex-grow flex items-center justify-center py-10 px-6 relative">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <main class="flex-grow flex items-center justify-center py-10 px-0 sm:px-6 relative pb-16 lg:pb-10">
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 w-full relative z-10">
             
-            <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
-                <div class="w-full max-w-sm animate-fade-in-up delay-100">
+            <div class="w-full lg:w-1/2 flex flex-col items-center text-center lg:items-start lg:text-left space-y-8 px-6 lg:px-0">
+                
+                <div class="w-full max-w-[280px] lg:max-w-sm animate-fade-in-up delay-100">
                     <img src="/images/brand-logo-new.png" alt="Logo" class="w-full h-auto drop-shadow-2xl">
                 </div>
+                
                 <div class="space-y-4 animate-fade-in-up delay-200">
-                    <p class="text-lg sm:text-xl font-medium text-blue-100 leading-relaxed max-w-md">
-                        Join Sri Lanka's leading digital platform for <span class="font-bold text-brand-gold">Mass Media</span> and Communication studies.
+                    <p class="text-base sm:text-xl font-medium text-blue-100 leading-relaxed max-w-md">
+                        Join Sri Lanka's leading digital platform for <br class="block sm:hidden">
+                        <span class="font-bold text-brand-gold">Mass Media</span> and Communication studies.
                     </p>
                 </div>
-                <div class="flex flex-col w-full max-w-[280px] lg:max-w-none lg:flex-row gap-4 animate-fade-in-up delay-300">
-                    <a href="/student/register" class="w-full px-8 py-4 bg-brand-gold text-white font-bold rounded-full animate-pulse-glow text-center text-lg hover-bg-brand-gold transition-all duration-300">
+                
+                <div class="flex flex-col w-full max-w-[280px] sm:max-w-md sm:flex-row gap-4 animate-fade-in-up delay-300">
+                    <a href="/student/register" class="w-full sm:w-1/2 px-6 py-4 bg-brand-gold text-white font-bold rounded-full animate-pulse-glow text-center text-lg hover-bg-brand-gold transition-all duration-300">
                         Register
                     </a>
-                    <a href="/student/login" class="w-full px-8 py-4 bg-white/10 border border-white/20 text-white font-bold rounded-full text-center text-lg hover:bg-white hover:text-[#16437A] transition-all duration-300">
+                    <a href="/student/login" class="w-full sm:w-1/2 px-6 py-4 bg-white/10 border border-white/20 text-white font-bold rounded-full text-center text-lg hover:bg-white hover:text-[#16437A] transition-all duration-300">
                         Login
                     </a>
                 </div>
             </div>
 
-            <div class="w-full lg:w-1/2 flex justify-center animate-fade-in-up delay-400">
+            <div class="w-full lg:w-1/2 flex justify-center animate-fade-in-up delay-400 px-6 lg:px-0">
                 <div class="animate-float w-full max-w-sm lg:max-w-lg">
                     <div class="relative rounded-2xl shadow-gold-heavy border border-white/20 overflow-hidden">
                         <img src="/images/suranga-hero-new.jpg" alt="Suranga Gamage" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-700">
@@ -82,7 +90,7 @@
     </main>
 
     <footer class="py-6 text-center text-blue-200/60 text-sm relative z-50 animate-fade-in-up delay-400">
-        <p>&copy; 2026 Surangamedia. All rights reserved.</p>
+        <p>&copy; 2026 Surangamedia. Developed by NC Enterprises. All rights reserved.</p>
     </footer>
 
 </body>
