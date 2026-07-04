@@ -62,10 +62,11 @@ class EnrollmentResource extends Resource
                 ->components([
                     Select::make('status')
                         ->options([
-                            'requested' => 'Requested',
-                            'paid'      => 'Paid',
-                            'free'      => 'Free',
-                            'postpay'   => 'Postpay',
+                            'requested'       => 'Requested',
+                            'pending_payment' => 'Pending Verification',
+                            'postpay'         => 'Postpay',
+                            'paid'            => 'Paid',
+                            'free'            => 'Free',
                         ])
                         ->required()
                         ->default('requested'),
@@ -104,7 +105,9 @@ class EnrollmentResource extends Resource
                     ->badge()
                     ->colors([
                         'warning' => 'requested',
-                        'success' => fn($state) => in_array($state, ['paid', 'free', 'postpay']),
+                        'info'    => 'pending_payment',
+                        'gray'    => 'postpay',
+                        'success' => fn($state) => in_array($state, ['paid', 'free']),
                     ]),
 
                 TextColumn::make('created_at')
@@ -115,10 +118,11 @@ class EnrollmentResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->options([
-                        'requested' => 'Requested',
-                        'free'      => 'Free',
-                        'paid'      => 'Paid',
-                        'postpay'   => 'Postpay',
+                        'requested'       => 'Requested',
+                        'pending_payment' => 'Pending Verification',
+                        'postpay'         => 'Postpay',
+                        'free'            => 'Free',
+                        'paid'            => 'Paid',
                     ]),
             ])
             ->recordActions([
@@ -127,7 +131,7 @@ class EnrollmentResource extends Resource
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn($record) => $record->status === 'requested')
+                    ->visible(fn($record) => in_array($record->status, ['requested', 'pending_payment']))
                     ->form([
                         \Filament\Forms\Components\Placeholder::make('bank_slip')
                             ->label('Uploaded Bank Slip')
