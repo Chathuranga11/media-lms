@@ -25,4 +25,10 @@ class Material extends Model
     {
         return $this->belongsTo(Lesson::class);
     }
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'material_user')
+            ->withPivot('watch_count')
+            ->withTimestamps();
+    }
 }
