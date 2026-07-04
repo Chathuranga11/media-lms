@@ -90,7 +90,7 @@
                 <!-- Brand Logo (Fade in 1st) -->
                 <!-- Note: Removed mix-blend-mode so transparent PNGs look perfect on the dark background -->
                 <div class="w-full max-w-md xl:max-w-lg animate-fade-in-up delay-100">
-                    <img src="/images/brand-logo.png" alt="Suranga Gamage Logo" class="w-full h-auto drop-shadow-2xl">
+                    <img src="/images/brand-logo-new.png" alt="Suranga Gamage Logo" class="w-full h-auto drop-shadow-2xl">
                 </div>
 
                 <!-- Text (Fade in 2nd) -->
@@ -123,7 +123,7 @@
                     <!-- Image container with glowing border -->
                     <div class="relative overflow-hidden rounded-2xl shadow-gold-heavy border border-white/20 bg-gradient-to-t from-[#0E2E56] to-transparent">
                         <!-- Make sure to use the exact path to your new photo -->
-                        <img src="/images/suranga-hero.jpg" alt="Suranga Gamage" class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700">
+                        <img src="/images/suranga-hero-new.jpg" alt="Suranga Gamage" class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700">
                     </div>
                 </div>
                 
