@@ -13,6 +13,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+// Forcing Git to recognize this file
 
 // The completely unified v4 Action namespaces!
 use Filament\Actions\EditAction;

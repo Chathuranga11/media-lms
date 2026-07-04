@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Filament\Resources\FlyerResource\Pages;
+// Forcing Git to recognize this file
 
 use App\Filament\Resources\FlyerResource;
 use Filament\Actions;
