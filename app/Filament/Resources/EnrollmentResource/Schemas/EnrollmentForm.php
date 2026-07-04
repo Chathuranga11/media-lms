@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Enrollments\Schemas;
+namespace App\Filament\Resources\EnrollmentResource\Schemas;
 
 use Filament\Schemas\Schema;
 

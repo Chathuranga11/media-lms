@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\EnrollmentResource\Tables;
+namespace App\Filament\Resources\Flyers\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 
-class EnrollmentsTable
+class FlyersTable
 {
     public static function configure(Table $table): Table
     {
