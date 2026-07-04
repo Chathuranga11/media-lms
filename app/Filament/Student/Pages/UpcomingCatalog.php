@@ -47,7 +47,7 @@ class UpcomingCatalog extends Page
                 Enrollment::create([
                     'user_id' => Auth::id(), // <-- Zero squigglies here
                     'lesson_id' => $arguments['lesson'],
-                    'status' => 'Pending Verification',
+                    'status' => 'pending_payment', // The database accepts this silently
                     'payment_slip' => $data['payment_slip'],
                 ]);
 
