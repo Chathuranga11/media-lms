@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Flyers\Tables;
+namespace App\Filament\Resources\FlyerResource\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;

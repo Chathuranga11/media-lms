@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Flyers\Schemas;
+namespace App\Filament\Resources\FlyerResource\Schemas;
 
 use Filament\Schemas\Schema;
 // Forcing Git to recognize this file
