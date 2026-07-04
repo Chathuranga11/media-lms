@@ -9,81 +9,131 @@
     <style>
         body { font-family: 'Poppins', sans-serif; }
         
+        /* PREMIUM COLORS */
+        .text-brand-gold { color: #C59C52; }
+        .bg-brand-gold { background-color: #C59C52; }
+        .hover-bg-brand-gold:hover { background-color: #A67E36; }
+        
         /* 
-           Adjusted Hex Code: This is a deeper golden yellow to better match his jacket photo.
-           If it still doesn't match perfectly, the rounded corners and shadows below will hide it! 
-        */
-        .bg-brand-yellow { background-color: #fcd116; }
+         * CUSTOM ANIMATIONS 
+         */
+         
+        /* 1. Fade In Up (For page load staggered entrance) */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         
-        .text-brand-blue { color: #004aad; }
-        .bg-brand-blue { background-color: #004aad; }
-        .hover-bg-brand-blue:hover { background-color: #003682; }
+        .animate-fade-in-up { 
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            opacity: 0; /* Starts hidden */
+        }
         
-        .bg-brand-red { background-color: #c8102e; }
-        .hover-bg-brand-red:hover { background-color: #a50d25; }
+        /* Stagger delays so elements appear one after another */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+
+        /* 2. Floating Effect (For the Hero Image) */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        /* 3. Pulse Glow (For the primary Call-To-Action button) */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(197, 156, 82, 0.5); }
+            70% { box-shadow: 0 0 0 20px rgba(197, 156, 82, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(197, 156, 82, 0); }
+        }
+        .animate-pulse-glow { animation: pulseGlow 2.5s infinite; }
+        
+        /* Custom Gold Glow shadow for the image */
+        .shadow-gold-heavy { box-shadow: 0 20px 50px -12px rgba(197, 156, 82, 0.25); }
     </style>
 </head>
-<body class="bg-brand-yellow text-slate-900 antialiased min-h-screen flex flex-col overflow-x-hidden">
+
+<!-- Applied a deep, premium blue gradient background -->
+<body class="bg-gradient-to-br from-[#071324] via-[#16437A] to-[#071324] text-white antialiased min-h-screen flex flex-col overflow-x-hidden">
 
     <!-- Navbar -->
-    <nav class="w-full py-6 px-6 lg:px-12 flex justify-between items-center relative z-50">
-        <div class="text-2xl font-black tracking-tight text-brand-blue drop-shadow-sm">
-            Suranga<span class="text-slate-900">media</span>
+    <nav class="w-full py-6 px-6 lg:px-12 flex justify-between items-center relative z-50 animate-fade-in-up">
+        <div class="text-2xl font-black tracking-tight drop-shadow-lg">
+            Suranga<span class="text-brand-gold">media</span>
         </div>
         <div class="flex gap-3 sm:gap-4">
-            <!-- Redirected strictly to Student Login -->
-            <a href="/student/login" class="px-5 py-2.5 text-sm font-bold text-brand-blue border-2 border-brand-blue rounded-full hover:bg-brand-blue hover:text-white transition-all duration-300">
+            <!-- Transparent button for dark mode -->
+            <a href="/student/login" class="px-5 py-2.5 text-sm font-bold text-white border-2 border-white/30 rounded-full hover:bg-white hover:text-[#16437A] transition-all duration-300">
                 Log In
             </a>
-            <!-- Redirected strictly to Student Register -->
-            <a href="/student/register" class="px-5 py-2.5 text-sm font-bold bg-brand-red text-white rounded-full shadow-lg shadow-red-900/20 hover-bg-brand-red transition-all duration-300 transform hover:-translate-y-0.5">
+            <!-- Solid Gold button -->
+            <a href="/student/register" class="px-5 py-2.5 text-sm font-bold bg-brand-gold text-white rounded-full shadow-lg hover-bg-brand-gold transition-all duration-300 transform hover:-translate-y-1">
                 Register
             </a>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center pt-2 pb-12 lg:py-0">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+    <main class="flex-grow flex items-center justify-center pt-2 pb-12 lg:py-0 relative">
+        
+        <!-- Subtle background glow effect behind everything -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 relative z-10">
             
             <!-- Left Side: Logo & CTAs -->
-            <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8 z-10">
+            <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
                 
-                <!-- Brand Logo Image with Blend Mode to hide the background box -->
-                <div class="w-full max-w-md xl:max-w-lg transform hover:scale-105 transition-transform duration-500" style="mix-blend-mode: darken;">
-                    <img src="/images/brand-logo.png" alt="Suranga Gamage Logo" class="w-full h-auto">
+                <!-- Brand Logo (Fade in 1st) -->
+                <!-- Note: Removed mix-blend-mode so transparent PNGs look perfect on the dark background -->
+                <div class="w-full max-w-md xl:max-w-lg animate-fade-in-up delay-100">
+                    <img src="/images/brand-logo.png" alt="Suranga Gamage Logo" class="w-full h-auto drop-shadow-2xl">
                 </div>
 
-                <div class="space-y-4 px-4 lg:px-0">
-                    <p class="text-lg sm:text-xl font-bold text-slate-800 leading-relaxed max-w-md">
-                        Join Sri Lanka's leading digital platform for Mass Media and Communication studies.
+                <!-- Text (Fade in 2nd) -->
+                <div class="space-y-4 px-4 lg:px-0 animate-fade-in-up delay-200">
+                    <p class="text-lg sm:text-xl font-medium text-blue-100 leading-relaxed max-w-md">
+                        Join Sri Lanka's leading digital platform for <span class="font-bold text-brand-gold drop-shadow-md">Mass Media</span> and Communication studies.
                     </p>
                 </div>
                 
-                <!-- Call to Action Buttons (Student Only) -->
-                <div class="flex flex-col w-full sm:w-auto sm:flex-row items-center gap-4 pt-4">
-                    <a href="/student/register" class="w-full sm:w-auto px-8 py-4 bg-brand-red text-white font-bold rounded-full shadow-xl shadow-red-900/30 hover-bg-brand-red transition-all duration-300 transform hover:-translate-y-1 text-center text-lg">
-                        Start Learning Today
+                <!-- Call to Action Buttons (Fade in 3rd) -->
+                <div class="flex flex-col w-full sm:w-auto sm:flex-row items-center gap-4 pt-4 animate-fade-in-up delay-300">
+                    
+                    <!-- Primary Button (Gold with Pulse Glow) -->
+                    <a href="/student/register" class="w-full sm:w-auto px-8 py-4 bg-brand-gold text-white font-bold rounded-full animate-pulse-glow hover-bg-brand-gold transition-all duration-300 transform hover:-translate-y-1 text-center text-lg">
+                        Register
                     </a>
-                    <a href="/student/login" class="w-full sm:w-auto px-8 py-4 bg-brand-blue text-white font-bold rounded-full shadow-xl shadow-blue-900/30 hover-bg-brand-blue transition-all duration-300 transform hover:-translate-y-1 text-center text-lg">
-                        Student Portal
+                    
+                    <!-- Secondary Button (Glassmorphism outline) -->
+                    <a href="/student/login" class="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold rounded-full hover:bg-white hover:text-[#16437A] transition-all duration-300 transform hover:-translate-y-1 text-center text-lg">
+                        Login
                     </a>
                 </div>
             </div>
 
-            <!-- Right Side: Hero Profile Image -->
-            <div class="w-full lg:w-1/2 flex justify-center lg:justify-end relative z-10 mt-4 lg:mt-0">
-                <!-- Added rounded corners and a massive shadow to make it look like a premium card -->
-                <div class="relative w-full max-w-lg xl:max-w-xl transform hover:-translate-y-2 transition-transform duration-500 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20">
-                    <img src="/images/suranga-hero.jpg" alt="Suranga Gamage" class="w-full h-auto object-cover">
+            <!-- Right Side: Hero Profile Image (Fade in 4th AND Floats) -->
+            <div class="w-full lg:w-1/2 flex justify-center lg:justify-end mt-8 lg:mt-0 animate-fade-in-up delay-400">
+                
+                <!-- The float animation wrapper -->
+                <div class="animate-float w-full max-w-lg xl:max-w-xl">
+                    <!-- Image container with glowing border -->
+                    <div class="relative overflow-hidden rounded-2xl shadow-gold-heavy border border-white/20 bg-gradient-to-t from-[#0E2E56] to-transparent">
+                        <!-- Make sure to use the exact path to your new photo -->
+                        <img src="/images/suranga-hero.jpg" alt="Suranga Gamage" class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700">
+                    </div>
                 </div>
+                
             </div>
             
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="py-6 text-center text-slate-800/80 text-sm font-semibold relative z-50">
+    <footer class="py-6 text-center text-blue-200/60 text-sm font-medium relative z-50 animate-fade-in-up delay-400">
         <p>&copy; 2026 Surangamedia. Developed by NC Enterprises. All rights reserved.</p>
     </footer>
 

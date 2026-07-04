@@ -4,6 +4,7 @@ namespace App\Filament\Student\Pages\Auth;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea; // <-- 1. Import this
 use Filament\Schemas\Schema;
 use Filament\Auth\Pages\Register as BaseRegister;
 
@@ -11,11 +12,10 @@ class StudentRegister extends BaseRegister
 {
     public function form(Schema $schema): Schema
     {
-        $years = array_combine(range(2023, 2030), range(2023, 2030));
+        $years = array_combine(range(2026, 2030), range(2026, 2030));
 
         return $schema
             ->components([
-                // Replaced the default Name component with First and Last Name
                 TextInput::make('first_name')
                     ->label('First Name')
                     ->required(),
@@ -24,7 +24,6 @@ class StudentRegister extends BaseRegister
                     ->label('Last Name')
                     ->required(),
 
-                // Updated to 'mobile_number' to match your database
                 TextInput::make('mobile_number')
                     ->label('Mobile Number')
                     ->required()
@@ -61,7 +60,7 @@ class StudentRegister extends BaseRegister
                         'Trincomalee' => 'Trincomalee',
                         'Vavuniya' => 'Vavuniya',
                     ])
-                    ->searchable() // Allows users to type and search
+                    ->searchable()
                     ->required(),
 
                 Select::make('al_batch')
@@ -79,6 +78,13 @@ class StudentRegister extends BaseRegister
                     ])
                     ->required()
                     ->native(false),
+
+                // 2. Added Home Address field
+                Textarea::make('address')
+                    ->label('Home Address (For Tute Delivery')
+                    ->rows(3)
+                    ->required()
+                    ->columnSpanFull(),
 
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),

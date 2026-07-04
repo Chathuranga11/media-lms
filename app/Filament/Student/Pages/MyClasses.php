@@ -13,11 +13,11 @@ class MyClasses extends Page
     protected static BackedEnum | string | null $navigationIcon = 'heroicon-o-book-open';
 
     // ADDED: Locks this tab to Position #2 in your sidebar
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected string $view = 'filament.student.pages.my-classes';
 
-    protected static ?string $title = 'My Enrolled Classes';
+    protected static ?string $title = 'My Classes';
 
     protected function getViewData(): array
     {

@@ -28,6 +28,7 @@ class MyProfile extends Page implements HasForms
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user';
     protected string $view = 'filament.student.pages.my-profile';
     protected static ?string $navigationLabel = 'My Profile';
+    protected static ?int $navigationSort = 5;
 
     public ?array $data = [];
 

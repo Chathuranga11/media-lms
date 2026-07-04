@@ -14,7 +14,8 @@ use BackedEnum;
 class UpcomingCatalog extends Page
 {
     protected static BackedEnum | string | null $navigationIcon = 'heroicon-o-sparkles';
-    protected static ?string $navigationLabel = 'Upcoming Lessons';
+    protected static ?string $navigationLabel = 'Live Classes';
+    protected static ?int $navigationSort = 3;
     protected static ?string $title = 'Available Upcoming Lessons';
     protected string $view = 'filament.student.pages.lesson-catalog';
 
