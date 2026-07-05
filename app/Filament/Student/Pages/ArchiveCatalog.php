@@ -8,7 +8,7 @@ use Filament\Forms\Components\FileUpload;
 use App\Models\Lesson;
 use App\Models\Enrollment;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Auth; // <-- Explicit Facade imported
+use Illuminate\Support\Facades\Auth;
 use BackedEnum;
 
 class ArchiveCatalog extends Page
@@ -46,9 +46,14 @@ class ArchiveCatalog extends Page
             ])
             ->action(function (array $data, array $arguments) {
                 Enrollment::create([
-                    'user_id' => Auth::id(), // <-- Zero squigglies here
+                    'user_id' => Auth::id(),
                     'lesson_id' => $arguments['lesson'],
-                    'status' => 'Pending Verification',
+
+                    // ✅ FIXED: Changed to match the exact database ENUM
+                    'status' => 'pending_payment',
+
+                    // Note: Ensure your database column is actually named 'payment_slip'. 
+                    // If it is 'payment_slip_path', change the key below to match!
                     'payment_slip' => $data['payment_slip'],
                 ]);
 
