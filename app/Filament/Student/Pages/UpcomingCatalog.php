@@ -14,7 +14,7 @@ use BackedEnum;
 class UpcomingCatalog extends Page
 {
     protected static BackedEnum | string | null $navigationIcon = 'heroicon-o-sparkles';
-    protected static ?string $navigationLabel = 'Live Classes';
+    protected static ?string $navigationLabel = 'Receipt Upload';
     protected static ?int $navigationSort = 3;
     protected static ?string $title = 'Available Upcoming Lessons';
     protected string $view = 'filament.student.pages.lesson-catalog';
@@ -48,8 +48,8 @@ class UpcomingCatalog extends Page
                 Enrollment::create([
                     'user_id' => Auth::id(), // <-- Zero squigglies here
                     'lesson_id' => $arguments['lesson'],
-                    'status' => 'pending_payment', // The database accepts this silently
-                    'payment_slip' => $data['payment_slip'],
+                    'status' => 'pending_payment',
+                    'payment_slip_path' => $data['payment_slip'],
                 ]);
 
                 Notification::make()
