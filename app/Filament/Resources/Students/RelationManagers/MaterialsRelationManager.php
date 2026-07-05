@@ -42,9 +42,10 @@ class MaterialsRelationManager extends RelationManager
             ->headerActions([
                 //
             ])
-            ->actions([
-                // Using Fully Qualified Class Name (FQCN) to guarantee production stability
-                \Filament\Tables\Actions\Action::make('adjust_views')
+            // 1. CRITICAL FIX: Changed from actions() to recordActions()
+            ->recordActions([
+                // 2. CRITICAL FIX: Changed to the unified \Filament\Actions\Action namespace
+                \Filament\Actions\Action::make('adjust_views')
                     ->label('Edit Views')
                     ->icon('heroicon-m-adjustments-horizontal')
                     ->color('warning')
@@ -56,8 +57,8 @@ class MaterialsRelationManager extends RelationManager
                             ->helperText('Set to 0 to completely reset their views.'),
                     ])
                     ->fillForm(fn($record): array => [
-                        // Properly pulling the count from the material_user pivot table
-                        'watch_count' => $record->pivot->watch_count,
+                        // Safe pivot mapping based on your table columns
+                        'watch_count' => $record->watch_count,
                     ])
                     ->action(function ($record, array $data, RelationManager $livewire) {
                         $livewire->getOwnerRecord()->materials()->updateExistingPivot($record->id, [
