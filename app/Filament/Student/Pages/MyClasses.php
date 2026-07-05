@@ -6,6 +6,7 @@ use Filament\Pages\Page;
 use App\Models\Enrollment;
 use App\Models\Material;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; // <-- Added DB Facade
 use Filament\Notifications\Notification;
 use BackedEnum;
 
@@ -16,7 +17,6 @@ class MyClasses extends Page
     protected string $view = 'filament.student.pages.my-classes';
     protected static ?string $title = 'My Classes';
 
-    // This array will tell AlpineJS which videos the student is currently allowed to see
     public array $unlockedVideos = [];
 
     protected function getViewData(): array
@@ -29,56 +29,52 @@ class MyClasses extends Page
         ];
     }
 
-    /**
-     * Gatekeeper Method: Called when they click "Load Recording"
-     */
     public function unlockVideo($materialId)
     {
         try {
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
+            $userId = Auth::id();
 
-            $material = Material::findOrFail($materialId);
+            // Safely query the pivot table directly to bypass any Model relationship errors
+            $pivot = DB::table('material_user')
+                ->where('user_id', $userId)
+                ->where('material_id', $materialId)
+                ->first();
 
-            // Safety check: Prevent fatal error if relationship is missing in User model
-            if (!method_exists($user, 'materials')) {
-                throw new \Exception("Developer Error: Please add the 'materials()' belongsToMany relationship to the User model.");
-            }
+            if (!$pivot) {
+                // First view
+                DB::table('material_user')->insert([
+                    'user_id' => $userId,
+                    'material_id' => $materialId,
+                    'watch_count' => 1
+                ]);
+            } else {
+                if ($pivot->watch_count >= 3) {
+                    Notification::make()
+                        ->danger()
+                        ->title('View Limit Reached')
+                        ->body('You have used all 3 views for this recording.')
+                        ->send();
 
-            if ($material->type === 'recording') {
-                $pivot = $user->materials()->where('material_id', $materialId)->first();
-
-                if (!$pivot) {
-                    // First view
-                    $user->materials()->attach($materialId, ['watch_count' => 1]);
-                } else {
-                    $currentViews = $pivot->pivot->watch_count;
-
-                    if ($currentViews >= 3) {
-                        // Block access
-                        Notification::make()
-                            ->danger()
-                            ->title('View Limit Reached')
-                            ->body('You have reached the maximum view limit (3/3) for this recording. Please contact administration.')
-                            ->send();
-                        return;
-                    }
-
-                    // Allow access, increment count
-                    $user->materials()->updateExistingPivot($materialId, [
-                        'watch_count' => $currentViews + 1
-                    ]);
+                    return; // Stop execution
                 }
+
+                // Increment view count
+                DB::table('material_user')
+                    ->where('user_id', $userId)
+                    ->where('material_id', $materialId)
+                    ->update([
+                        'watch_count' => $pivot->watch_count + 1
+                    ]);
             }
 
-            // If they passed the check, tell the frontend this specific video is unlocked!
+            // Unlock the video in the UI
             $this->unlockedVideos[$materialId] = true;
         } catch (\Exception $e) {
-            // Catch the error so Livewire DOES NOT freeze on "Loading..."
+            // If the database fails, catch it and show a popup instead of freezing the button
             Notification::make()
                 ->danger()
-                ->title('Action Failed')
-                ->body($e->getMessage())
+                ->title('System Error')
+                ->body('Could not load video. Error: ' . $e->getMessage())
                 ->send();
         }
     }

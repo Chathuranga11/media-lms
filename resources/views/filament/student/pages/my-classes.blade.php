@@ -7,8 +7,12 @@
                     $rawStatus = strtolower(trim($enrollment->status ?? ''));
                     $isPaid    = in_array($rawStatus, ['paid', 'active', 'approved']);
                     $isBasic   = in_array($rawStatus, ['free', 'postpay', 'postpaid']);
+                    $isPending = !$isPaid && !$isBasic;
 
-                    $materials = \Illuminate\Support\Facades\DB::table('materials')->where('lesson_id', $enrollment->lesson->id)->get();
+                    $materials = \Illuminate\Support\Facades\DB::table('materials')
+                        ->where('lesson_id', $enrollment->lesson->id)
+                        ->get();
+
                     $liveClasses = $materials->filter(fn($m) => strtolower($m->type) === 'live');
                     $pdfs        = $materials->filter(fn($m) => strtolower($m->type) === 'pdf');
                     $recordings  = $materials->filter(fn($m) => strtolower($m->type) === 'recording');
@@ -32,9 +36,9 @@
                     <div style="display: flex; flex-direction: column; padding-top: 0.5rem;">
                         @if ($isPaid || $isBasic)
 
-                            {{-- A. LIVE CLASSES (Singular Focus) --}}
+                            {{-- A. LIVE CLASSES --}}
                             @foreach ($liveClasses as $live)
-                                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
+                                <div wire:key="live-{{ $live->id }}" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
                                     <div style="display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0;">
                                         <div style="width: 3rem; height: 3rem; border-radius: 50%; background-color: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                             <x-filament::icon icon="heroicon-s-video-camera" style="width: 1.5rem; height: 1.5rem;" />
@@ -59,8 +63,6 @@
                             {{-- B. GROUPED PDFs --}}
                             @if ($pdfs->isNotEmpty())
                                 <div style="padding: 1.5rem 0; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
-                                    
-                                    {{-- Group Header --}}
                                     <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
                                         <div style="width: 3rem; height: 3rem; border-radius: 50%; background-color: rgba(14, 165, 233, 0.15); color: #0ea5e9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                             <x-filament::icon icon="heroicon-s-document-duplicate" style="width: 1.5rem; height: 1.5rem;" />
@@ -70,10 +72,9 @@
                                         </div>
                                     </div>
 
-                                    {{-- Grouped Nested List --}}
                                     <div style="display: flex; flex-direction: column; gap: 0.75rem; padding-left: 1rem; border-left: 2px solid rgba(14, 165, 233, 0.3); margin-left: 1.5rem;">
                                         @foreach ($pdfs as $pdf)
-                                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background: rgba(14, 165, 233, 0.05); border-radius: 0.5rem; border: 1px solid rgba(14, 165, 233, 0.1);">
+                                            <div wire:key="pdf-{{ $pdf->id }}" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background: rgba(14, 165, 233, 0.05); border-radius: 0.5rem; border: 1px solid rgba(14, 165, 233, 0.1);">
                                                 <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem;">
                                                     <x-filament::icon icon="heroicon-m-document-text" style="width: 1.2rem; height: 1.2rem; color: #0ea5e9; flex-shrink: 0;" />
                                                     <div style="font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -93,8 +94,6 @@
                             @if ($recordings->isNotEmpty())
                                 @if ($isPaid)
                                     <div style="padding: 1.5rem 0; border-bottom: none;">
-                                        
-                                        {{-- Group Header --}}
                                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
                                             <div style="width: 3rem; height: 3rem; border-radius: 50%; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                                 <x-filament::icon icon="heroicon-s-film" style="width: 1.5rem; height: 1.5rem;" />
@@ -104,7 +103,6 @@
                                             </div>
                                         </div>
 
-                                        {{-- Grouped Nested List --}}
                                         <div style="display: flex; flex-direction: column; gap: 1rem; padding-left: 1rem; border-left: 2px solid rgba(245, 158, 11, 0.3); margin-left: 1.5rem;">
                                             @foreach ($recordings as $rec)
                                                 @php
@@ -121,7 +119,7 @@
                                                     $cleanRecUrl = preg_match('/src=["\']([^"\']+)["\']/i', $rawRec, $m) ? $m[1] : (preg_match('/https?:\/\/[^\s"\'<>]+/i', $rawRec, $m) ? $m[0] : '');
                                                 @endphp
 
-                                                <div x-data="{ copied: false }" style="background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 0.75rem; padding: 1.25rem;">
+                                                <div wire:key="rec-{{ $rec->id }}" x-data="{ copied: false }" style="background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 0.75rem; padding: 1.25rem;">
                                                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
                                                         
                                                         <div style="flex: 1; min-width: 0;">
@@ -163,7 +161,6 @@
                                                                 </div>
                                                             @else
                                                                 <div style="position: relative; width: 100%;">
-                                                                    {{-- Added wire:loading.attr="disabled" to prevent double-clicks --}}
                                                                     <x-filament::button wire:click="unlockVideo({{ $rec->id }})" wire:loading.attr="disabled" color="warning" size="sm" style="width: 100%;">
                                                                         Load Replay
                                                                     </x-filament::button>
