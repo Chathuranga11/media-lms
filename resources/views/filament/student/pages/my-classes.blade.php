@@ -34,7 +34,7 @@
 
                             {{-- A. LIVE CLASSES --}}
                             @foreach ($liveClasses as $live)
-                                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
+                                <div wire:key="live-{{ $live->id }}" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
                                     <div style="display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0;">
                                         <div style="width: 3rem; height: 3rem; border-radius: 50%; background-color: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                             <x-filament::icon icon="heroicon-s-video-camera" style="width: 1.5rem; height: 1.5rem;" />
@@ -70,7 +70,7 @@
 
                                     <div style="display: flex; flex-direction: column; gap: 0.75rem; padding-left: 1rem; border-left: 2px solid rgba(14, 165, 233, 0.3); margin-left: 1.5rem;">
                                         @foreach ($pdfs as $pdf)
-                                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background: rgba(14, 165, 233, 0.05); border-radius: 0.5rem; border: 1px solid rgba(14, 165, 233, 0.1);">
+                                            <div wire:key="pdf-{{ $pdf->id }}" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background: rgba(14, 165, 233, 0.05); border-radius: 0.5rem; border: 1px solid rgba(14, 165, 233, 0.1);">
                                                 <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem;">
                                                     <x-filament::icon icon="heroicon-m-document-text" style="width: 1.2rem; height: 1.2rem; color: #0ea5e9; flex-shrink: 0;" />
                                                     <div style="font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -115,7 +115,7 @@
                                                     $cleanRecUrl = preg_match('/src=["\']([^"\']+)["\']/i', $rawRec, $m) ? $m[1] : (preg_match('/https?:\/\/[^\s"\'<>]+/i', $rawRec, $m) ? $m[0] : '');
                                                 @endphp
 
-                                                <div x-data="{ copied: false }" style="background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 0.75rem; padding: 1.25rem;">
+                                                <div wire:key="rec-{{ $rec->id }}" x-data="{ copied: false }" style="background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 0.75rem; padding: 1.25rem;">
                                                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
                                                         
                                                         <div style="flex: 1; min-width: 0;">
@@ -145,27 +145,26 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- Action Button Column (MORPHDOM SAFE) --}}
+                                                        {{-- NATIVE HTML ACTION BUTTON COLUMN (100% MORPHDOM SAFE) --}}
                                                         <div style="flex-shrink: 0; min-width: 130px; margin-top: 0.25rem;">
                                                             @if($isUnlockedNow)
-                                                                <div wire:key="state-unlocked-{{ $rec->id }}">
-                                                                    <x-filament::button type="button" wire:click="$set('unlockedVideos.{{ $rec->id }}', false)" color="gray" size="sm" style="width: 100%;">
-                                                                        Close Player
-                                                                    </x-filament::button>
-                                                                </div>
+                                                                <button type="button" wire:click.prevent="$set('unlockedVideos.{{ $rec->id }}', false)" style="width: 100%; background-color: rgba(156, 163, 175, 0.1); color: inherit; border: 1px solid rgba(156, 163, 175, 0.3); padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s;">
+                                                                    Close Player
+                                                                </button>
                                                             @elseif($isLocked)
-                                                                <div wire:key="state-locked-{{ $rec->id }}" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.3rem 0.6rem; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold; width: 100%;">
-                                                                    <x-filament::icon icon="heroicon-m-lock-closed" style="width: 1rem; height: 1rem; margin-right: 0.3rem;" /> Locked
+                                                                <div style="display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 0.8rem; background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; border-radius: 0.5rem; font-size: 0.85rem; font-weight: bold; width: 100%;">
+                                                                    <x-filament::icon icon="heroicon-m-lock-closed" style="width: 1.1rem; height: 1.1rem; margin-right: 0.4rem;" />
+                                                                    Locked
                                                                 </div>
                                                             @else
-                                                                <div wire:key="state-ready-{{ $rec->id }}" style="position: relative; width: 100%;">
-                                                                    <x-filament::button type="button" wire:click="unlockVideo('{{ $rec->id }}')" wire:loading.attr="disabled" color="warning" size="sm" style="width: 100%;">
-                                                                        Load Replay
-                                                                    </x-filament::button>
-                                                                    <div wire:loading wire:target="unlockVideo('{{ $rec->id }}')" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background-color: #f59e0b; border-radius: 0.5rem; color: white; font-weight: bold; font-size: 0.8rem;">
-                                                                        Loading...
-                                                                    </div>
-                                                                </div>
+                                                                <button type="button" 
+                                                                    wire:click.prevent="unlockVideo({{ $rec->id }})" 
+                                                                    wire:loading.attr="disabled"
+                                                                    style="width: 100%; background-color: #f59e0b; color: white; border: none; padding: 0.5rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);"
+                                                                >
+                                                                    <span wire:loading.remove wire:target="unlockVideo({{ $rec->id }})">Load Replay</span>
+                                                                    <span wire:loading wire:target="unlockVideo({{ $rec->id }})">Loading...</span>
+                                                                </button>
                                                             @endif
                                                         </div>
                                                         
