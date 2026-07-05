@@ -49,7 +49,7 @@
                             </div>
                         @endif
 
-                        {{-- 2. INLINE RECORDING PLAYER (Zero extra clicks required) --}}
+                        {{-- 2. INLINE RECORDING PLAYER & VIEW LIMITS --}}
                         @if (!empty($enrollment->lesson->recording_link) || !empty($enrollment->lesson->recording_url))
                             @php
                                 $rawRec = $enrollment->lesson->recording_link ?? $enrollment->lesson->recording_url ?? '';
@@ -63,6 +63,15 @@
 
                                 $recPw = $enrollment->lesson->recording_passcode ?? '';
                                 $hasRecPw = !empty($recPw) && $recPw !== 'N/A';
+
+                                // --- VIEW LIMIT LOGIC ---
+                                $materialRecord = auth()->user()->materials()->where('material_id', $enrollment->lesson->id)->first();
+                                $watchCount = $materialRecord ? $materialRecord->pivot->watch_count : 0;
+                                
+                                $maxViews = 3;
+                                $remainingViews = max(0, $maxViews - $watchCount);
+                                $progressPercentage = ($remainingViews / $maxViews) * 100;
+                                $isLocked = $remainingViews === 0;
                             @endphp
 
                             @if (!empty($cleanRecUrl))
@@ -87,16 +96,38 @@
                                         @endif
                                     </div>
 
-                                    {{-- THE UNIVERSAL RESPONSIVE VIDEO BOX --}}
-                                    {{-- 'inset-0 w-full h-full' forces the iframe to physically obey the parent aspect ratio --}}
-                                    <div class="relative w-full aspect-[16/10] min-h-[210px] rounded-xl overflow-hidden bg-black border border-gray-800 shadow-inner">
-                                        <iframe 
-                                            src="{{ $cleanRecUrl }}" 
-                                            class="absolute inset-0 w-full h-full border-0 bg-black" 
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                            allowfullscreen
-                                            loading="lazy"
-                                        ></iframe>
+                                    {{-- Graphical Remaining Views Indicator --}}
+                                    <div class="w-full flex items-center justify-between gap-3 mt-1 mb-2">
+                                        <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                            <div 
+                                                class="h-full rounded-full transition-all duration-500 {{ $remainingViews > 1 ? 'bg-green-500' : ($remainingViews == 1 ? 'bg-amber-500' : 'bg-red-500') }}" 
+                                                style="width: {{ $progressPercentage }}%"
+                                            ></div>
+                                        </div>
+                                        <span class="text-[10px] font-bold {{ $isLocked ? 'text-red-500' : 'text-gray-500 dark:text-gray-400' }}">
+                                            {{ $remainingViews }} / {{ $maxViews }} views
+                                        </span>
+                                    </div>
+
+                                    {{-- THE RESPONSIVE VIDEO BOX --}}
+                                    <div class="relative w-full aspect-[16/10] min-h-[210px] rounded-xl overflow-hidden bg-black border border-gray-800 shadow-inner group">
+                                        @if($isLocked)
+                                            {{-- LOCKED OVERLAY --}}
+                                            <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-900/95 backdrop-blur-sm text-center p-4">
+                                                <x-filament::icon icon="heroicon-s-lock-closed" class="w-10 h-10 text-red-500 mb-3" />
+                                                <h4 class="text-white font-bold text-sm sm:text-base mb-1">View Limit Reached</h4>
+                                                <p class="text-gray-400 text-[10px] sm:text-xs">You have exhausted your {{ $maxViews }} views for this recording. Please contact admin to request more views.</p>
+                                            </div>
+                                        @else
+                                            {{-- ACTUAL VIDEO IFRAME --}}
+                                            <iframe 
+                                                src="{{ $cleanRecUrl }}" 
+                                                class="absolute inset-0 w-full h-full border-0 bg-black" 
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                allowfullscreen
+                                                loading="lazy"
+                                            ></iframe>
+                                        @endif
                                     </div>
                                 </div>
                             @endif
