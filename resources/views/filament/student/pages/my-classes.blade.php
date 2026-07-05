@@ -99,7 +99,7 @@
                                                 <x-filament::icon icon="heroicon-s-film" style="width: 1.5rem; height: 1.5rem;" />
                                             </div>
                                             <div style="font-weight: bold; font-size: 1.05rem; color: inherit;">
-                                                Cloud Recordings <span style="opacity: 0.6; font-size: 0.85rem; margin-left: 0.25rem;">({{ $recordings->count() }})</span>
+                                                Cloud Recordings Test <span style="opacity: 0.6; font-size: 0.85rem; margin-left: 0.25rem;">({{ $recordings->count() }})</span>
                                             </div>
                                         </div>
 
