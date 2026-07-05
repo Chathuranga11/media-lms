@@ -14,7 +14,7 @@ use BackedEnum;
 class ArchiveCatalog extends Page
 {
     protected static BackedEnum | string | null $navigationIcon = 'heroicon-o-archive-box';
-    protected static ?string $navigationLabel = 'Old Classes';
+    protected static ?string $navigationLabel = 'Recordings';
     protected static ?int $navigationSort = 4;
     protected static ?string $title = 'Available Archived Lessons';
     protected string $view = 'filament.student.pages.lesson-catalog';
