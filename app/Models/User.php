@@ -60,7 +60,7 @@ class User extends Authenticatable implements FilamentUser, HasName // <-- Added
 
     public function materials()
     {
-        return $this->belongsToMany(Material::class, 'material_user')
+        return $this->belongsToMany(\App\Models\Material::class, 'material_user')
             ->withPivot('watch_count')
             ->withTimestamps();
     }

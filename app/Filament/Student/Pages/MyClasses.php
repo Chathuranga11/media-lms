@@ -34,38 +34,52 @@ class MyClasses extends Page
      */
     public function unlockVideo($materialId)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
 
-        $material = Material::findOrFail($materialId);
+            $material = Material::findOrFail($materialId);
 
-        if ($material->type === 'recording') {
-            $pivot = $user->materials()->where('material_id', $materialId)->first();
-
-            if (!$pivot) {
-                // First view
-                $user->materials()->attach($materialId, ['watch_count' => 1]);
-            } else {
-                $currentViews = $pivot->pivot->watch_count;
-
-                if ($currentViews >= 3) {
-                    // Block access
-                    Notification::make()
-                        ->danger()
-                        ->title('View Limit Reached')
-                        ->body('You have reached the maximum view limit (3/3) for this recording. Please contact administration.')
-                        ->send();
-                    return;
-                }
-
-                // Allow access, increment count
-                $user->materials()->updateExistingPivot($materialId, [
-                    'watch_count' => $currentViews + 1
-                ]);
+            // Safety check: Prevent fatal error if relationship is missing in User model
+            if (!method_exists($user, 'materials')) {
+                throw new \Exception("Developer Error: Please add the 'materials()' belongsToMany relationship to the User model.");
             }
-        }
 
-        // If they passed the check, tell the frontend this specific video is unlocked!
-        $this->unlockedVideos[$materialId] = true;
+            if ($material->type === 'recording') {
+                $pivot = $user->materials()->where('material_id', $materialId)->first();
+
+                if (!$pivot) {
+                    // First view
+                    $user->materials()->attach($materialId, ['watch_count' => 1]);
+                } else {
+                    $currentViews = $pivot->pivot->watch_count;
+
+                    if ($currentViews >= 3) {
+                        // Block access
+                        Notification::make()
+                            ->danger()
+                            ->title('View Limit Reached')
+                            ->body('You have reached the maximum view limit (3/3) for this recording. Please contact administration.')
+                            ->send();
+                        return;
+                    }
+
+                    // Allow access, increment count
+                    $user->materials()->updateExistingPivot($materialId, [
+                        'watch_count' => $currentViews + 1
+                    ]);
+                }
+            }
+
+            // If they passed the check, tell the frontend this specific video is unlocked!
+            $this->unlockedVideos[$materialId] = true;
+        } catch (\Exception $e) {
+            // Catch the error so Livewire DOES NOT freeze on "Loading..."
+            Notification::make()
+                ->danger()
+                ->title('Action Failed')
+                ->body($e->getMessage())
+                ->send();
+        }
     }
 }
