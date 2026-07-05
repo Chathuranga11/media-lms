@@ -7,9 +7,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 
-// THIS IS THE CRITICAL LINE THAT WAS MISSING:
-use Filament\Tables\Actions\Action;
-
 class MaterialsRelationManager extends RelationManager
 {
     protected static string $relationship = 'materials';
@@ -46,8 +43,8 @@ class MaterialsRelationManager extends RelationManager
                 //
             ])
             ->actions([
-                // Because we imported Action at the top, this will now work perfectly.
-                Action::make('adjust_views')
+                // Using Fully Qualified Class Name (FQCN) to guarantee production stability
+                \Filament\Tables\Actions\Action::make('adjust_views')
                     ->label('Edit Views')
                     ->icon('heroicon-m-adjustments-horizontal')
                     ->color('warning')
@@ -59,7 +56,8 @@ class MaterialsRelationManager extends RelationManager
                             ->helperText('Set to 0 to completely reset their views.'),
                     ])
                     ->fillForm(fn($record): array => [
-                        'watch_count' => $record->watch_count,
+                        // Properly pulling the count from the material_user pivot table
+                        'watch_count' => $record->pivot->watch_count,
                     ])
                     ->action(function ($record, array $data, RelationManager $livewire) {
                         $livewire->getOwnerRecord()->materials()->updateExistingPivot($record->id, [
