@@ -1,5 +1,12 @@
 <x-filament-panels::page>
 
+{{-- HOME / BACK TO DASHBOARD BUTTON --}}
+    <div style="margin-bottom: 0.5rem;">
+        <x-filament::button tag="a" href="/student" color="gray" icon="heroicon-m-home">
+            Back to Dashboard
+        </x-filament::button>
+    </div>
+
     {{-- Responsive Grid: 1 column on mobile, 2 on tablets/mini-PCs, 3 on large monitors --}}
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         

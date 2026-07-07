@@ -1,4 +1,11 @@
 <x-filament-panels::page>
+
+{{-- HOME / BACK TO DASHBOARD BUTTON --}}
+    <div style="margin-bottom: 0.5rem;">
+        <x-filament::button tag="a" href="/student" color="gray" icon="heroicon-m-home">
+            Back to Dashboard
+        </x-filament::button>
+    </div>
     
     {{-- Reverted back to the standard HTML form tag --}}
     <form wire:submit="save">

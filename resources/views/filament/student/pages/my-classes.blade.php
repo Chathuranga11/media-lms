@@ -1,4 +1,11 @@
 <x-filament-panels::page>
+
+{{-- HOME / BACK TO DASHBOARD BUTTON --}}
+    <div style="margin-bottom: 0.5rem;">
+        <x-filament::button tag="a" href="/student" color="gray" icon="heroicon-m-home">
+            Back to Dashboard
+        </x-filament::button>
+    </div>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;">
         
         @forelse ($enrollments as $enrollment)
