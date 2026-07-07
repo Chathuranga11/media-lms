@@ -15,6 +15,7 @@ class Material extends Model
         'lesson_id',
         'title',
         'type',
+        'audience',
         'zoom_url',
         'zoom_passcode',
         'url',

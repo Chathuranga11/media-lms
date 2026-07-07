@@ -1,21 +1,47 @@
 <x-filament-panels::page>
-
-{{-- HOME / BACK TO DASHBOARD BUTTON --}}
+    
+    {{-- HOME / BACK TO DASHBOARD BUTTON --}}
     <div style="margin-bottom: 0.5rem;">
         <x-filament::button tag="a" href="/student" color="gray" icon="heroicon-m-home">
             Back to Dashboard
         </x-filament::button>
     </div>
+
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;">
         
         @forelse ($enrollments as $enrollment)
             @if ($enrollment->lesson)
                 @php
-                    $rawStatus = strtolower(trim($enrollment->status ?? ''));
-                    $isPaid    = in_array($rawStatus, ['paid', 'active', 'approved']);
-                    $isBasic   = in_array($rawStatus, ['free', 'postpay', 'postpaid']);
+                    $rawStatus  = strtolower(trim($enrollment->status ?? ''));
+                    
+                    // Define student access tiers
+                    $isPaidHall = $rawStatus === 'paid_hall';
+                    $isPaid     = in_array($rawStatus, ['paid', 'active', 'approved']);
+                    $isBasic    = in_array($rawStatus, ['free', 'postpay', 'postpaid']);
+                    $hasAccess  = $isPaidHall || $isPaid || $isBasic;
 
-                    $materials = \Illuminate\Support\Facades\DB::table('materials')->where('lesson_id', $enrollment->lesson->id)->get();
+                    // 1. Get ALL materials for this lesson
+                    $allMaterials = \Illuminate\Support\Facades\DB::table('materials')
+                                        ->where('lesson_id', $enrollment->lesson->id)
+                                        ->get();
+
+                    // 2. ENFORCE AUDIENCE LOGIC: Filter materials based on the student's tier
+                    $materials = $allMaterials->filter(function($m) use ($isPaidHall, $isPaid, $isBasic) {
+                        $audience = strtolower(trim($m->audience ?? 'all'));
+
+                        if ($audience === 'all') {
+                            return true; // Everyone sees this
+                        }
+                        if ($audience === 'paid_hall' && $isPaidHall) {
+                            return true; // Only Hall students see this
+                        }
+                        if ($audience === 'paid' && ($isPaid || $isBasic)) {
+                            return true; // Paid/Free/Postpay see this
+                        }
+                        return false; // Hide from user
+                    });
+
+                    // 3. Categorize the filtered materials
                     $liveClasses = $materials->filter(fn($m) => strtolower($m->type) === 'live');
                     $pdfs        = $materials->filter(fn($m) => strtolower($m->type) === 'pdf');
                     $recordings  = $materials->filter(fn($m) => strtolower($m->type) === 'recording');
@@ -29,7 +55,7 @@
                             <span style="font-size: 1.15rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 {{ $enrollment->lesson->name }}
                             </span>
-                            <x-filament::badge color="{{ $isPaid ? 'success' : ($isBasic ? 'info' : 'warning') }}" size="sm" style="flex-shrink: 0; text-transform: uppercase; font-weight: bold;">
+                            <x-filament::badge color="{{ $hasAccess ? 'success' : 'warning' }}" size="sm" style="flex-shrink: 0; text-transform: uppercase; font-weight: bold;">
                                 {{ $enrollment->status ?? 'Requested' }}
                             </x-filament::badge>
                         </div>
@@ -37,7 +63,7 @@
 
                     {{-- 2. CARD BODY --}}
                     <div style="display: flex; flex-direction: column; padding-top: 0.5rem;">
-                        @if ($isPaid || $isBasic)
+                        @if ($hasAccess)
 
                             {{-- A. LIVE CLASSES --}}
                             @foreach ($liveClasses as $live)
@@ -95,7 +121,7 @@
 
                             {{-- C. GROUPED RECORDINGS --}}
                             @if ($recordings->isNotEmpty())
-                                @if ($isPaid)
+                                @if ($isPaid || $isPaidHall) 
                                     <div style="padding: 1.5rem 0; border-bottom: none;">
                                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
                                             <div style="width: 3rem; height: 3rem; border-radius: 50%; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -152,7 +178,7 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- NATIVE HTML ACTION BUTTON COLUMN (100% MORPHDOM SAFE) --}}
+                                                        {{-- ACTION BUTTON COLUMN --}}
                                                         <div style="flex-shrink: 0; min-width: 130px; margin-top: 0.25rem;">
                                                             @if($isUnlockedNow)
                                                                 <button type="button" wire:click.prevent="$set('unlockedVideos.{{ $rec->id }}', false)" style="width: 100%; background-color: rgba(156, 163, 175, 0.1); color: inherit; border: 1px solid rgba(156, 163, 175, 0.3); padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s;">
