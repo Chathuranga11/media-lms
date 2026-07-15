@@ -75,11 +75,12 @@ class EnrollmentResource extends Resource
 
                     FileUpload::make('payment_slip_path')
                         ->label('Payment Slip')
-                        ->disk('public')              
+                        ->disk('public')
                         ->directory('payment-slips')
                         ->image()
-                        ->openable()                  
-                        ->downloadable()              
+                        ->openable()
+                        ->downloadable()
+                        ->deletable(false)
                         ->columnSpanFull(),
                 ]),
         ]);
@@ -109,7 +110,7 @@ class EnrollmentResource extends Resource
                         'warning' => 'requested',
                         'info'    => 'pending_payment',
                         'gray'    => 'postpay',
-                        'success' => fn($state) => in_array($state, ['paid', 'free', 'paid_hall']), 
+                        'success' => fn($state) => in_array($state, ['paid', 'free', 'paid_hall']),
                     ]),
 
                 TextColumn::make('created_at')
