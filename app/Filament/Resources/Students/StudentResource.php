@@ -44,13 +44,17 @@ class StudentResource extends Resource
                 \Filament\Tables\Columns\TextColumn::make('last_name')->label('Last Name')->searchable()->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('mobile_number')->label('Mobile Number')->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('district')->label('District')->sortable()->searchable()->placeholder('Not Set'),
-
+                \Filament\Tables\Columns\TextColumn::make('al_batch')
+                    ->label('A/L Batch')
+                    ->searchable()
+                    ->sortable(),
                 // Active access toggle switch right on the grid
                 \Filament\Tables\Columns\ToggleColumn::make('is_active')
                     ->label('Active Access')
                     ->onColor('success')
                     ->offColor('danger')
                     ->sortable(),
+
             ])
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('district')
