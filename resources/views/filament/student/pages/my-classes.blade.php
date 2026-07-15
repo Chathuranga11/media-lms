@@ -30,15 +30,15 @@
                         $audience = strtolower(trim($m->audience ?? 'all'));
 
                         if ($audience === 'all') {
-                            return true; // Everyone sees this
+                            return true; 
                         }
                         if ($audience === 'paid_hall' && $isPaidHall) {
-                            return true; // Only Hall students see this
+                            return true; 
                         }
                         if ($audience === 'paid' && ($isPaid || $isBasic)) {
-                            return true; // Paid/Free/Postpay see this
+                            return true; 
                         }
-                        return false; // Hide from user
+                        return false; 
                     });
 
                     // 3. Categorize the filtered materials
@@ -51,11 +51,12 @@
                     
                     {{-- 1. CARD HEADER --}}
                     <x-slot name="heading">
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                            <span style="font-size: 1.15rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;">
+                            {{-- REMOVED ELLIPSIS, ALLOWED WRAPPING --}}
+                            <span style="font-size: 1.15rem; font-weight: bold; word-break: break-word; line-height: 1.3;">
                                 {{ $enrollment->lesson->name }}
                             </span>
-                            <x-filament::badge color="{{ $hasAccess ? 'success' : 'warning' }}" size="sm" style="flex-shrink: 0; text-transform: uppercase; font-weight: bold;">
+                            <x-filament::badge color="{{ $hasAccess ? 'success' : 'warning' }}" size="sm" style="flex-shrink: 0; text-transform: uppercase; font-weight: bold; margin-top: 0.15rem;">
                                 {{ $enrollment->status ?? 'Requested' }}
                             </x-filament::badge>
                         </div>
@@ -68,16 +69,17 @@
                             {{-- A. LIVE CLASSES --}}
                             @foreach ($liveClasses as $live)
                                 <div wire:key="live-{{ $live->id }}" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
-                                    <div style="display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0;">
+                                    <div style="display: flex; align-items: flex-start; gap: 1rem; flex: 1; min-width: 0;">
                                         <div style="width: 3rem; height: 3rem; border-radius: 50%; background-color: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                             <x-filament::icon icon="heroicon-s-video-camera" style="width: 1.5rem; height: 1.5rem;" />
                                         </div>
                                         <div style="flex: 1; min-width: 0;">
-                                            <div style="font-weight: bold; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                            {{-- REMOVED ELLIPSIS, ALLOWED WRAPPING --}}
+                                            <div style="font-weight: bold; font-size: 0.95rem; word-break: break-word; line-height: 1.3;">
                                                 {{ $live->title ?: 'Live Classroom' }}
                                             </div>
                                             @if (!empty($live->zoom_passcode) && $live->zoom_passcode !== 'N/A')
-                                                <div style="font-size: 0.75rem; font-family: monospace; opacity: 0.8; margin-top: 0.25rem;">
+                                                <div style="font-size: 0.75rem; font-family: monospace; opacity: 0.8; margin-top: 0.4rem;">
                                                     Passcode: <span style="color: #10b981; font-weight: bold; user-select: all;">{{ $live->zoom_passcode }}</span>
                                                 </div>
                                             @endif
@@ -104,9 +106,10 @@
                                     <div style="display: flex; flex-direction: column; gap: 0.75rem; padding-left: 1rem; border-left: 2px solid rgba(14, 165, 233, 0.3); margin-left: 1.5rem;">
                                         @foreach ($pdfs as $pdf)
                                             <div wire:key="pdf-{{ $pdf->id }}" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background: rgba(14, 165, 233, 0.05); border-radius: 0.5rem; border: 1px solid rgba(14, 165, 233, 0.1);">
-                                                <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem;">
-                                                    <x-filament::icon icon="heroicon-m-document-text" style="width: 1.2rem; height: 1.2rem; color: #0ea5e9; flex-shrink: 0;" />
-                                                    <div style="font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <div style="flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 0.75rem;">
+                                                    <x-filament::icon icon="heroicon-m-document-text" style="width: 1.2rem; height: 1.2rem; color: #0ea5e9; flex-shrink: 0; margin-top: 0.1rem;" />
+                                                    {{-- REMOVED ELLIPSIS, ALLOWED WRAPPING --}}
+                                                    <div style="font-weight: 600; font-size: 0.85rem; word-break: break-word; line-height: 1.4;">
                                                         {{ $pdf->title ?: 'Lesson Material' }}
                                                     </div>
                                                 </div>
@@ -152,13 +155,14 @@
                                                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
                                                         
                                                         <div style="flex: 1; min-width: 0;">
-                                                            <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: bold; font-size: 0.9rem;">
-                                                                <x-filament::icon icon="heroicon-s-play-circle" style="width: 1.2rem; height: 1.2rem; color: #f59e0b; flex-shrink: 0;" />
-                                                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $rec->title ?: 'Cloud Replay' }}</span>
+                                                            <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-weight: bold; font-size: 0.9rem;">
+                                                                <x-filament::icon icon="heroicon-s-play-circle" style="width: 1.2rem; height: 1.2rem; color: #f59e0b; flex-shrink: 0; margin-top: 0.1rem;" />
+                                                                {{-- REMOVED ELLIPSIS, ALLOWED WRAPPING --}}
+                                                                <span style="word-break: break-word; line-height: 1.4;">{{ $rec->title ?: 'Cloud Replay' }}</span>
                                                             </div>
                                                             
                                                             @if (!empty($rec->zoom_passcode) && $rec->zoom_passcode !== 'N/A')
-                                                                <button @click="navigator.clipboard.writeText('{{ $rec->zoom_passcode }}'); copied = true; setTimeout(() => copied = false, 2000)" type="button" style="margin-top: 0.5rem; font-size: 0.7rem; font-family: monospace; font-weight: bold; color: #f59e0b; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 0.2rem 0.5rem; border-radius: 0.25rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                                                <button @click="navigator.clipboard.writeText('{{ $rec->zoom_passcode }}'); copied = true; setTimeout(() => copied = false, 2000)" type="button" style="margin-top: 0.75rem; font-size: 0.7rem; font-family: monospace; font-weight: bold; color: #f59e0b; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 0.2rem 0.5rem; border-radius: 0.25rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;">
                                                                     <x-filament::icon icon="heroicon-o-clipboard-document" style="width: 0.8rem; height: 0.8rem;" />
                                                                     <span x-text="copied ? 'Copied!' : 'PW: {{ $rec->zoom_passcode }}'"></span>
                                                                 </button>
