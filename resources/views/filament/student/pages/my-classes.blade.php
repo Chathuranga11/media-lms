@@ -108,7 +108,6 @@
                                             <div wire:key="pdf-{{ $pdf->id }}" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1rem; background: rgba(14, 165, 233, 0.05); border-radius: 0.5rem; border: 1px solid rgba(14, 165, 233, 0.1);">
                                                 <div style="flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 0.75rem;">
                                                     <x-filament::icon icon="heroicon-m-document-text" style="width: 1.2rem; height: 1.2rem; color: #0ea5e9; flex-shrink: 0; margin-top: 0.1rem;" />
-                                                    {{-- REMOVED ELLIPSIS, ALLOWED WRAPPING --}}
                                                     <div style="font-weight: 600; font-size: 0.85rem; word-break: break-word; line-height: 1.4;">
                                                         {{ $pdf->title ?: 'Lesson Material' }}
                                                     </div>
@@ -135,7 +134,8 @@
                                             </div>
                                         </div>
 
-                                        <div style="display: flex; flex-direction: column; gap: 1rem; padding-left: 1rem; border-left: 2px solid rgba(245, 158, 11, 0.3); margin-left: 1.5rem;">
+                                        {{-- REDUCED PADDING/MARGINS HERE FOR MOBILE WIDTH --}}
+                                        <div style="display: flex; flex-direction: column; gap: 1rem; padding-left: 0.5rem; border-left: 2px solid rgba(245, 158, 11, 0.3); margin-left: 0.5rem;">
                                             @foreach ($recordings as $rec)
                                                 @php
                                                     $isUnlockedNow = !empty($unlockedVideos[$rec->id]);
@@ -151,13 +151,13 @@
                                                     $cleanRecUrl = preg_match('/src=["\']([^"\']+)["\']/i', $rawRec, $m) ? $m[1] : (preg_match('/https?:\/\/[^\s"\'<>]+/i', $rawRec, $m) ? $m[0] : '');
                                                 @endphp
 
-                                                <div wire:key="rec-{{ $rec->id }}" x-data="{ copied: false }" style="background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 0.75rem; padding: 1.25rem;">
+                                                {{-- REDUCED CARD PADDING HERE --}}
+                                                <div wire:key="rec-{{ $rec->id }}" x-data="{ copied: false }" style="background: rgba(245, 158, 11, 0.03); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 0.75rem; padding: 0.75rem;">
                                                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem;">
                                                         
                                                         <div style="flex: 1; min-width: 0;">
                                                             <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-weight: bold; font-size: 0.9rem;">
                                                                 <x-filament::icon icon="heroicon-s-play-circle" style="width: 1.2rem; height: 1.2rem; color: #f59e0b; flex-shrink: 0; margin-top: 0.1rem;" />
-                                                                {{-- REMOVED ELLIPSIS, ALLOWED WRAPPING --}}
                                                                 <span style="word-break: break-word; line-height: 1.4;">{{ $rec->title ?: 'Cloud Replay' }}</span>
                                                             </div>
                                                             
@@ -207,11 +207,12 @@
                                                         
                                                     </div>
 
-                                                    {{-- Inline Player Expansion (UPDATED FOR ZOOM MOBILE) --}}
+                                                    {{-- Inline Player Expansion --}}
                                                     @if($isUnlockedNow)
                                                         <div wire:key="player-{{ $rec->id }}" style="width: 100%; margin-top: 1rem; border-top: 1px solid rgba(156, 163, 175, 0.1); padding-top: 1.25rem;">
                                                             <div style="width: 100%; height: 60vh; min-height: 450px; max-height: 700px; background-color: #f9fafb; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);">
-                                                                <iframe src="{{ $cleanRecUrl }}" style="width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+                                                                {{-- ADDED FULLSCREEN PERMISSIONS HERE --}}
+                                                                <iframe src="{{ $cleanRecUrl }}" style="width: 100%; height: 100%; border: 0;" allow="autoplay; fullscreen" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
                                                             </div>
                                                         </div>
                                                     @endif
