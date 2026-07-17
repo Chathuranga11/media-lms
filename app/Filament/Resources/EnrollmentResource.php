@@ -9,7 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder; // <-- ADDED
+use Illuminate\Database\Eloquent\Builder; 
 
 // --- LAYOUT & SCHEMAS ---
 use Filament\Schemas\Schema;
@@ -252,7 +252,7 @@ class EnrollmentResource extends Resource
                         'free'            => 'Free',
                     ]),
                 
-                // --- CUSTOM STUDENT STATUS FILTER ---
+                // --- FIXED: Custom Student Status Filter avoiding User relationships ---
                 SelectFilter::make('student_status')
                     ->label('Student Status')
                     ->options([
@@ -265,21 +265,44 @@ class EnrollmentResource extends Resource
                             return $query;
                         }
 
-                        return $query->whereHas('user', function (Builder $userQuery) use ($data) {
-                            if ($data['value'] === 'new') {
-                                $userQuery->has('enrollments', '<=', 1);
-                            } elseif ($data['value'] === 'regular') {
-                                $userQuery->has('enrollments', '>', 1)
-                                    ->whereHas('enrollments', function (Builder $enrollmentQuery) {
-                                        $enrollmentQuery->where('created_at', '>=', Carbon::now()->subMonth());
-                                    });
-                            } elseif ($data['value'] === 'not_regular') {
-                                $userQuery->has('enrollments', '>', 1)
-                                    ->whereDoesntHave('enrollments', function (Builder $enrollmentQuery) {
-                                        $enrollmentQuery->where('created_at', '>=', Carbon::now()->subMonth());
-                                    });
-                            }
-                        });
+                        $status = $data['value'];
+
+                        if ($status === 'new') {
+                            return $query->whereIn('user_id', function ($subquery) {
+                                $subquery->select('user_id')
+                                    ->from('enrollments')
+                                    ->groupBy('user_id')
+                                    ->havingRaw('COUNT(*) <= 1');
+                            });
+                        }
+
+                        if ($status === 'regular') {
+                            return $query->whereIn('user_id', function ($subquery) {
+                                $subquery->select('user_id')
+                                    ->from('enrollments')
+                                    ->groupBy('user_id')
+                                    ->havingRaw('COUNT(*) > 1');
+                            })->whereIn('user_id', function ($subquery) {
+                                $subquery->select('user_id')
+                                    ->from('enrollments')
+                                    ->where('created_at', '>=', Carbon::now()->subMonth());
+                            });
+                        }
+
+                        if ($status === 'not_regular') {
+                            return $query->whereIn('user_id', function ($subquery) {
+                                $subquery->select('user_id')
+                                    ->from('enrollments')
+                                    ->groupBy('user_id')
+                                    ->havingRaw('COUNT(*) > 1');
+                            })->whereNotIn('user_id', function ($subquery) {
+                                $subquery->select('user_id')
+                                    ->from('enrollments')
+                                    ->where('created_at', '>=', Carbon::now()->subMonth());
+                            });
+                        }
+
+                        return $query;
                     }),
             ])
             ->recordActions([ 
