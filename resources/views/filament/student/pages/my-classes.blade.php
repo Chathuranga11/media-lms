@@ -207,11 +207,11 @@
                                                         
                                                     </div>
 
-                                                    {{-- Inline Player Expansion --}}
+                                                    {{-- Inline Player Expansion (UPDATED FOR ZOOM MOBILE) --}}
                                                     @if($isUnlockedNow)
                                                         <div wire:key="player-{{ $rec->id }}" style="width: 100%; margin-top: 1rem; border-top: 1px solid rgba(156, 163, 175, 0.1); padding-top: 1.25rem;">
-                                                            <div style="position: relative; width: 100%; padding-bottom: 56.25%; background-color: #000; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);">
-                                                                <iframe src="{{ $cleanRecUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+                                                            <div style="width: 100%; height: 60vh; min-height: 450px; max-height: 700px; background-color: #f9fafb; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);">
+                                                                <iframe src="{{ $cleanRecUrl }}" style="width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
                                                             </div>
                                                         </div>
                                                     @endif
