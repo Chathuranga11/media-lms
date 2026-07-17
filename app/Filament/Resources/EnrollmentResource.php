@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder; // <-- ADDED
 
 // --- LAYOUT & SCHEMAS ---
 use Filament\Schemas\Schema;
@@ -106,7 +107,6 @@ class EnrollmentResource extends Resource
                     ]),
             ]),
 
-            // --- AMENDED: User-Friendly Custom Styled Table ---
             Section::make('Previous Enrollments')
                 ->description('History of classes this student has enrolled in.')
                 ->columnSpanFull()
@@ -130,7 +130,6 @@ class EnrollmentResource extends Resource
                                 return new HtmlString('<span style="color: #6b7280; font-style: italic;">No previous enrollments found for this student.</span>');
                             }
 
-                            // Built using inline styles to guarantee it works beautifully in Dark/Light mode
                             $html = '<div style="overflow-x: auto; border-radius: 0.5rem; border: 1px solid rgba(128, 128, 128, 0.2); margin-top: 0.5rem;">
                                         <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.875rem;">
                                             <thead style="background-color: rgba(128, 128, 128, 0.05);">
@@ -146,7 +145,6 @@ class EnrollmentResource extends Resource
                                 $date = $enr->created_at ? $enr->created_at->format('M d, Y - h:i A') : 'N/A';
                                 $className = $enr->lesson?->name ?? 'Unknown Class';
                                 
-                                // Colors mapped using RGBA to look great on dark backgrounds
                                 $statusColors = [
                                     'requested'       => 'color: #eab308; background-color: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.2);',
                                     'pending_payment' => 'color: #3b82f6; background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);',
@@ -253,6 +251,36 @@ class EnrollmentResource extends Resource
                         'paid_hall'       => 'Paid - Hall',
                         'free'            => 'Free',
                     ]),
+                
+                // --- CUSTOM STUDENT STATUS FILTER ---
+                SelectFilter::make('student_status')
+                    ->label('Student Status')
+                    ->options([
+                        'new'         => 'New',
+                        'regular'     => 'Regular',
+                        'not_regular' => 'Not Regular',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (! isset($data['value']) || blank($data['value'])) {
+                            return $query;
+                        }
+
+                        return $query->whereHas('user', function (Builder $userQuery) use ($data) {
+                            if ($data['value'] === 'new') {
+                                $userQuery->has('enrollments', '<=', 1);
+                            } elseif ($data['value'] === 'regular') {
+                                $userQuery->has('enrollments', '>', 1)
+                                    ->whereHas('enrollments', function (Builder $enrollmentQuery) {
+                                        $enrollmentQuery->where('created_at', '>=', Carbon::now()->subMonth());
+                                    });
+                            } elseif ($data['value'] === 'not_regular') {
+                                $userQuery->has('enrollments', '>', 1)
+                                    ->whereDoesntHave('enrollments', function (Builder $enrollmentQuery) {
+                                        $enrollmentQuery->where('created_at', '>=', Carbon::now()->subMonth());
+                                    });
+                            }
+                        });
+                    }),
             ])
             ->recordActions([ 
                 \Filament\Actions\Action::make('approvePayment')
