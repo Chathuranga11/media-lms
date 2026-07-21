@@ -7,6 +7,7 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth; // <-- ADDED: Auth Facade to satisfy Intelephense
 
 class CustomLogin extends BaseLogin
 {
@@ -38,8 +39,12 @@ class CustomLogin extends BaseLogin
     {
         $response = parent::authenticate();
 
-        if (! auth()->user()->is_active) {
-            auth()->logout();
+        // FIXED: Using Auth Facade so VS Code stops complaining
+        $user = Auth::user(); 
+
+        // safely check if the user object exists AND if they are deactivated
+        if ($user && ! $user->is_active) {
+            Auth::logout(); // FIXED: Using Auth Facade
 
             throw ValidationException::withMessages([
                 'data.phone' => 'Deactivated user, please contact Administrator.',
